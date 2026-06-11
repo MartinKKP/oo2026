@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <title>Lisa võistleja - OOP</title>
+    <style>
+        body { font-family: "Times New Roman", Times, serif; margin: 50px; line-height: 1.5; }
+        h2 { border-bottom: 1px solid black; }
+        .form-row { margin-bottom: 15px; }
+        label { display: inline-block; width: 120px; font-weight: bold; }
+        input { border: 1px solid black; padding: 3px; font-family: serif; }
+        .actions { margin-top: 20px; }
+        button { cursor: pointer; border: 1px solid black; background: #eee; padding: 5px 15px; font-family: serif; }
+        a { color: blue; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h2>Uue võistleja sisestamine</h2>
+
+<div class="form-row">
+    <label for="name">Täisnimi:</label>
+    <input type="text" id="name" size="30">
+</div>
+
+<div class="form-row">
+    <label for="country">Riigi kood:</label>
+    <input type="text" id="country" maxlength="3" placeholder="nt EST" style="text-transform: uppercase;">
+</div>
+
+<div class="form-row">
+    <label for="points">Punktisumma:</label>
+    <input type="number" id="points">
+</div>
+
+<div class="actions">
+    <button onclick="saveAthlete()">Salvesta andmed</button>
+    <span style="margin-left: 20px;">või <a href="index.html">tühista ja mine tagasi</a></span>
+</div>
+
+<script>
+    async function saveAthlete() {
+        const name = document.getElementById('name').value;
+        const country = document.getElementById('country').value.toUpperCase();
+        const points = document.getElementById('points').value;
+
+        if(!name || !country || !points) {
+            alert("Viga: Kõik väljad peavad olema täidetud!");
+            return;
+        }
+
+        const athlete = {
+            name: name,
+            country: country,
+            totalPoints: parseInt(points)
+        };
+
+        try {
+            const res = await fetch('/api/results', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(athlete)
+            });
+
+            if(res.ok) {
+                alert("Andmed edukalt salvestatud!");
+                window.location.href = "index.html";
+            } else {
+                alert("Serveri viga andmete salvestamisel.");
+            }
+        } catch (err) {
+            alert("Võrguviga: andmeid ei saadetud.");
+        }
+    }
+</script>
+</body>
+</html>
